@@ -9,8 +9,11 @@ public static class CarDatabase
     public static void Insert(Car newCar)
     {
         if (CheckForDuplicate(newCar))
-            throw new ArgumentException("The car is already in the database");
-        
+        {
+            Console.WriteLine("The car is already in the database\n");
+            return;
+        }
+
         using var streamWriter = File.AppendText(Path);
         foreach (var propertyInfo in newCar.GetType().GetProperties())
             streamWriter.Write(propertyInfo.GetValue(newCar, null) + ParameterSeparator);
@@ -35,10 +38,13 @@ public static class CarDatabase
         return cars;
     }
 
-    public static void Replace(Car car)
+    public static void Update(Car car)
     {
-        if (CheckForDuplicate(car))
-            throw new Exception("Car for replace not found");
+        if (CheckForDuplicate(car) == false)
+        {
+            Console.WriteLine("Car for replace not found\n");
+            return;
+        }
 
         Delete(car.Vin);
         Insert(car);

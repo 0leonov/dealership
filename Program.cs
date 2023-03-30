@@ -2,33 +2,63 @@
 
 internal static class Program
 {
-    private static readonly string[] CarDatabaseChoices = 
-    {
-        "Insert data",
-        "View data",
-        "Sort data",
-        "Search data",
-        "Update data",
-        "Delete data",
-        "Exit"
-    };
-    
     public static void Main(string[] args)
     {
+        string[] choices = 
+        {
+            "Interact with car database",
+            "Exit"
+        };
+
         while (true)
         {
-            var option = ConsoleManager.InputOption(CarDatabaseChoices);
+            var option = ConsoleManager.InputOption(choices);
 
             if (option == 0)
             {
+                InteractWithCarDatabase();
+            }
+            else if (option == 1)
+            {
+                return;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException(nameof(option));
+            }
+        }
+    }
+
+    private static void InteractWithCarDatabase()
+    {
+        string[] choices = 
+        {
+            "Insert data",
+            "View data",
+            "Sort data",
+            "Search data",
+            "Update data",
+            "Delete data",
+            "Return"
+        };
+        
+        while (true)
+        {
+            var option = ConsoleManager.InputOption(choices);
+
+            if (option == 0)
+            {
+                // Insert data
                 CarDatabase.Insert(ConsoleManager.InputCar());
             }
             else if (option == 1)
             {
+                // View data
                 ConsoleManager.PrintCars(CarDatabase.Read());
             }
             else if (option == 2)
             {
+                // Sort data
                 var carParameters = Enum.GetNames(typeof(CarComparisonParameter));
                 var index = ConsoleManager.InputOption(carParameters);
                 var parameter = (CarComparisonParameter)index;
@@ -40,6 +70,7 @@ internal static class Program
             }
             else if (option == 3)
             {
+                // Search data
                 var carParameters = Enum.GetNames(typeof(CarComparisonParameter));
                 var index = ConsoleManager.InputOption(carParameters);
                 var parameter = (CarComparisonParameter)index;
@@ -82,15 +113,22 @@ internal static class Program
             }
             else if (option == 4)
             {
-                CarDatabase.Replace(ConsoleManager.InputCar());
+                // Update data
+                CarDatabase.Update(ConsoleManager.InputCar());
             }
             else if (option == 5)
             {
+                // Delete data
                 CarDatabase.Delete(ConsoleManager.InputString("Enter the VIN of the car: "));
             }
             else if (option == 6)
             {
-                break;
+                // Return
+                return;
+            }
+            else
+            {
+                throw new IndexOutOfRangeException(nameof(option));
             }
         }
     }
