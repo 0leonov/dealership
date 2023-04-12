@@ -1,6 +1,6 @@
-﻿namespace Dealership;
+﻿namespace Dealership.Properties;
 
-public enum CarComparisonParameter
+public enum CarProperty
 {
     Make,
     Model,
