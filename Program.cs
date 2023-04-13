@@ -9,6 +9,18 @@ internal static class Program
     private static readonly CarDatabase CarDatabase = new("./car_database.txt");
     private static readonly PersonDatabase PersonDatabase = new("./person_database.txt");
 
+    private static string[] DatbaseInteractChoices =
+    {
+        "Return",
+        "Insert data",
+        "View data",
+        "Sort data",
+        "Search data",
+        "Update data",
+        "Delete data",
+        "Create database file"
+    };
+
     public static void Main()
     {
         string[] choices =
@@ -40,20 +52,9 @@ internal static class Program
 
     private static void InteractWithCarDatabase()
     {
-        string[] choices =
-        {
-            "Return",
-            "Insert data",
-            "View data",
-            "Sort data",
-            "Search data",
-            "Update data",
-            "Delete data"
-        };
-
         while (true)
         {
-            var option = ConsoleManager.InputOption(choices, "Car Database");
+            var option = ConsoleManager.InputOption(DatbaseInteractChoices, "Car Database");
 
             switch (option)
             {
@@ -99,6 +100,9 @@ internal static class Program
                 case 6:
                     CarDatabase.Delete(ConsoleManager.InputString("Enter the VIN of the car: "));
                     break;
+                case 7:
+                    CarDatabase.CreateFile();
+                    break;
                 default:
                     throw new IndexOutOfRangeException(nameof(option));
             }
@@ -107,20 +111,9 @@ internal static class Program
 
     private static void InteractWithPersonDatabase()
     {
-        string[] choices =
-        {
-            "Return",
-            "Insert data",
-            "View data",
-            "Sort data",
-            "Search data",
-            "Update data",
-            "Delete data"
-        };
-
         while (true)
         {
-            var option = ConsoleManager.InputOption(choices, "Person Database");
+            var option = ConsoleManager.InputOption(DatbaseInteractChoices, "Person Database");
 
             switch (option)
             {
@@ -134,9 +127,9 @@ internal static class Program
                     break;
                 case 3:
                 {
-                    var cars = CarDatabase.Read();
-                    var property = (CarProperty)ConsoleManager.InputPropertyIndex<PersonProperty>();
-                    cars.Sort(new CarComparer(property));
+                    var persons = PersonDatabase.Read();
+                    var property = (PersonProperty)ConsoleManager.InputPropertyIndex<PersonProperty>();
+                    persons.Sort(new PersonComparer(property));
 
                     string[] orderChoices =
                     {
@@ -147,9 +140,9 @@ internal static class Program
                     var order = ConsoleManager.InputOption(orderChoices, "Order");
 
                     if (order == 1)
-                        cars.Reverse();
+                        persons.Reverse();
 
-                    ConsoleManager.PrintTable(cars);
+                    ConsoleManager.PrintTable(persons);
                     break;
                 }
                 case 4:
@@ -165,6 +158,9 @@ internal static class Program
                     break;
                 case 6:
                     PersonDatabase.Delete(ConsoleManager.InputString("Enter the personal code of the person: "));
+                    break;
+                case 7:
+                    PersonDatabase.CreateFile();
                     break;
                 default:
                     throw new IndexOutOfRangeException(nameof(option));

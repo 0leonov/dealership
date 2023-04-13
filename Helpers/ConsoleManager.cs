@@ -118,6 +118,14 @@ public static class ConsoleManager
         PrintPressAnyKey();
     }
 
+    public static bool CheckErrorExistAndPrint(string errorText, bool errorExist)
+    {
+        if (errorExist)
+            Console.WriteLine(errorText);
+
+        return errorExist;
+    }
+
     private static void PrintLogo(string header)
     {
         Console.WriteLine(string.Format(

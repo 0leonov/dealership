@@ -12,13 +12,8 @@ public class CarComparer : IComparer<Car>
         _property = property;
     }
 
-    public int Compare(Car? x, Car? y)
+    public int Compare(Car x, Car y)
     {
-        if (x is null)
-            throw new ArgumentException("Invalid argument: ", nameof(x));
-        if (y is null)
-            throw new ArgumentException("Invalid argument: ", nameof(x));
-
         return _property switch
         {
             CarProperty.Make => string.Compare(x.Make, y.Make, StringComparison.Ordinal),

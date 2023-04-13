@@ -1,4 +1,5 @@
 ﻿using Dealership.DatabaseObjects;
+using Dealership.Helpers;
 
 namespace Dealership.Databases;
 
@@ -16,6 +17,9 @@ public abstract class Database<T> where T : DatabaseObject
 
     public void Insert(T entry)
     {
+        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
+            return;
+
         if (entry is null) throw new ArgumentNullException(nameof(entry));
 
         if (CheckForDuplicate(entry))
@@ -39,6 +43,9 @@ public abstract class Database<T> where T : DatabaseObject
 
     public List<T> Read()
     {
+        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
+            return new List<T>();
+
         var cars = new List<T>();
 
         using var streamReader = new StreamReader(_path);
@@ -57,11 +64,11 @@ public abstract class Database<T> where T : DatabaseObject
 
     public void Update(T entry)
     {
-        if (CheckForDuplicate(entry) == false)
-        {
-            Console.WriteLine("Not found for replace\n");
+        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
             return;
-        }
+
+        if (ConsoleManager.CheckErrorExistAndPrint("Not found for replace", CheckForDuplicate(entry) == false))
+            return;
 
         Delete(entry.GetPrimaryKey());
         Insert(entry);
@@ -69,6 +76,9 @@ public abstract class Database<T> where T : DatabaseObject
 
     public void Delete(string primaryKey)
     {
+        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
+            return;
+
         var content = "";
         using (var streamReader = new StreamReader(_path))
         {
@@ -88,6 +98,24 @@ public abstract class Database<T> where T : DatabaseObject
         {
             streamWriter.Write(content);
         }
+    }
+
+    public bool CheckFileExist() => File.Exists(_path);
+
+    public void EmptyFile()
+    {
+        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
+            return;
+
+        File.WriteAllText(_path, string.Empty);
+    }
+
+    public void CreateFile()
+    {
+        if (ConsoleManager.CheckErrorExistAndPrint("File already exist", CheckFileExist()))
+            return;
+
+        using (FileStream fs = File.Create(_path));
     }
 
     protected abstract T ParseLine(string line);
