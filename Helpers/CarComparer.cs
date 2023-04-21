@@ -12,8 +12,11 @@ public class CarComparer : IComparer<Car>
         _property = property;
     }
 
-    public int Compare(Car x, Car y)
+    public int Compare(Car? x, Car? y)
     {
+        if (x == null) throw new ArgumentNullException(nameof(x));
+        if (y == null) throw new ArgumentNullException(nameof(y));
+        
         return _property switch
         {
             CarProperty.Make => string.Compare(x.Make, y.Make, StringComparison.Ordinal),

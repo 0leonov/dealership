@@ -8,7 +8,7 @@ public abstract class Database<T> where T : DatabaseObject
     private const char EntrySeparator = '\n';
     protected const char ParameterSeparator = '\t';
 
-    private readonly string _path;
+    protected readonly string _path;
 
     protected Database(string path)
     {
@@ -21,12 +21,9 @@ public abstract class Database<T> where T : DatabaseObject
             return;
 
         if (entry is null) throw new ArgumentNullException(nameof(entry));
-
-        if (CheckForDuplicate(entry))
-        {
-            Console.WriteLine("Already in the database\n");
+        
+        if (ConsoleManager.CheckErrorExistAndPrint("Already in the database", CheckForDuplicate(entry)))
             return;
-        }
 
         using var streamWriter = File.AppendText(_path);
         foreach (var propertyInfo in entry.GetType().GetProperties())
@@ -39,6 +36,14 @@ public abstract class Database<T> where T : DatabaseObject
         }
 
         streamWriter.Write(EntrySeparator);
+    }
+    
+    protected void EmptyFile()
+    {
+        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
+            return;
+
+        File.WriteAllText(_path, string.Empty);
     }
 
     public List<T> Read()
@@ -62,52 +67,9 @@ public abstract class Database<T> where T : DatabaseObject
         return cars;
     }
 
-    public void Update(T entry)
+    protected bool CheckFileExist()
     {
-        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
-            return;
-
-        if (ConsoleManager.CheckErrorExistAndPrint("Not found for replace", CheckForDuplicate(entry) == false))
-            return;
-
-        Delete(entry.GetPrimaryKey());
-        Insert(entry);
-    }
-
-    public void Delete(string primaryKey)
-    {
-        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
-            return;
-
-        var content = "";
-        using (var streamReader = new StreamReader(_path))
-        {
-            while (streamReader.EndOfStream == false)
-            {
-                var line = streamReader.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(line))
-                    throw new Exception("Empty line in database");
-
-                if (line.Contains(primaryKey) == false)
-                    content += line + '\n';
-            }
-        }
-
-        using (var streamWriter = new StreamWriter(_path))
-        {
-            streamWriter.Write(content);
-        }
-    }
-
-    public bool CheckFileExist() => File.Exists(_path);
-
-    public void EmptyFile()
-    {
-        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
-            return;
-
-        File.WriteAllText(_path, string.Empty);
+        return File.Exists(_path);
     }
 
     public void CreateFile()
@@ -115,7 +77,9 @@ public abstract class Database<T> where T : DatabaseObject
         if (ConsoleManager.CheckErrorExistAndPrint("File already exist", CheckFileExist()))
             return;
 
-        using (FileStream fs = File.Create(_path));
+        using (File.Create(_path))
+        {
+        }
     }
 
     protected abstract T ParseLine(string line);

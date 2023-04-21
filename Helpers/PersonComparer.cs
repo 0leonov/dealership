@@ -12,8 +12,11 @@ public class PersonComparer : IComparer<Person>
         _property = property;
     }
 
-    public int Compare(Person x, Person y)
+    public int Compare(Person? x, Person? y)
     {
+        if (x == null) throw new ArgumentNullException(nameof(x));
+        if (y == null) throw new ArgumentNullException(nameof(y));
+        
         return _property switch
         {
             PersonProperty.PersonalCode => string.Compare(x.PersonalCode, y.PersonalCode, StringComparison.Ordinal),

@@ -9,14 +9,13 @@ internal static class Program
     private static readonly CarDatabase CarDatabase = new("./car_database.txt");
     private static readonly PersonDatabase PersonDatabase = new("./person_database.txt");
 
-    private static string[] DatbaseInteractChoices =
+    private static readonly string[] DatabaseInteractChoices =
     {
         "Return",
         "Insert data",
         "View data",
         "Sort data",
         "Search data",
-        "Update data",
         "Delete data",
         "Create database file"
     };
@@ -54,57 +53,58 @@ internal static class Program
     {
         while (true)
         {
-            var option = ConsoleManager.InputOption(DatbaseInteractChoices, "Car Database");
+            var option = ConsoleManager.InputOption(DatabaseInteractChoices, "Car Database");
 
-            switch (option)
+            if (option == 0) return;
+
+            if (option == 1)
             {
-                case 0:
-                    return;
-                case 1:
-                    CarDatabase.Insert(ConsoleManager.InputCar());
-                    break;
-                case 2:
-                    ConsoleManager.PrintTable(CarDatabase.Read());
-                    break;
-                case 3:
+                CarDatabase.Insert(ConsoleManager.InputCar());
+            }
+            else if (option == 2)
+            {
+                ConsoleManager.PrintTable(CarDatabase.Read());
+            }
+            else if (option == 3)
+            {
+                var cars = CarDatabase.Read();
+                var property = (CarProperty)ConsoleManager.InputPropertyIndex<CarProperty>();
+                cars.Sort(new CarComparer(property));
+
+                string[] orderChoices =
                 {
-                    var cars = CarDatabase.Read();
-                    var property = (CarProperty)ConsoleManager.InputPropertyIndex<CarProperty>();
-                    cars.Sort(new CarComparer(property));
+                    "Increasing",
+                    "Decreasing"
+                };
 
-                    string[] orderChoices =
-                    {
-                        "Increasing",
-                        "Decreasing"
-                    };
+                var order = ConsoleManager.InputOption(orderChoices, "Order");
 
-                    var order = ConsoleManager.InputOption(orderChoices, "Order");
+                if (order == 1)
+                    cars.Reverse();
 
-                    if (order == 1)
-                        cars.Reverse();
-
-                    ConsoleManager.PrintTable(cars);
-                    break;
-                }
-                case 4:
-                {
-                    var cars = CarDatabase.Read();
-                    var property = (CarProperty)ConsoleManager.InputPropertyIndex<CarProperty>();
-                    cars = cars.Search(property);
-                    ConsoleManager.PrintTable(cars);
-                    break;
-                }
-                case 5:
-                    CarDatabase.Update(ConsoleManager.InputCar());
-                    break;
-                case 6:
-                    CarDatabase.Delete(ConsoleManager.InputString("Enter the VIN of the car: "));
-                    break;
-                case 7:
-                    CarDatabase.CreateFile();
-                    break;
-                default:
-                    throw new IndexOutOfRangeException(nameof(option));
+                ConsoleManager.PrintTable(cars);
+            }
+            else if (option == 4)
+            {
+                var cars = CarDatabase.Read();
+                var property = (CarProperty)ConsoleManager.InputPropertyIndex<CarProperty>();
+                cars = cars.Search(property);
+                ConsoleManager.PrintTable(cars);
+            }
+            else if (option == 5)
+            {
+                var property = (CarProperty)ConsoleManager.InputPropertyIndex<CarProperty>();
+                var value = ConsoleManager.InputString($"Enter value of {property}: ");
+                CarDatabase.Delete(property, value);
+                Console.Clear();
+            }
+            else if (option == 6)
+            {
+                CarDatabase.CreateFile();
+            }
+            else
+            {
+                throw new IndexOutOfRangeException(nameof(option));
             }
         }
     }
@@ -113,57 +113,58 @@ internal static class Program
     {
         while (true)
         {
-            var option = ConsoleManager.InputOption(DatbaseInteractChoices, "Person Database");
+            var option = ConsoleManager.InputOption(DatabaseInteractChoices, "Person Database");
 
-            switch (option)
+            if (option == 0) return;
+            
+            if (option == 1)
             {
-                case 0:
-                    return;
-                case 1:
-                    PersonDatabase.Insert(ConsoleManager.InputPerson());
-                    break;
-                case 2:
-                    ConsoleManager.PrintTable(PersonDatabase.Read());
-                    break;
-                case 3:
+                PersonDatabase.Insert(ConsoleManager.InputPerson());
+            }
+            else if (option == 2)
+            {
+                ConsoleManager.PrintTable(PersonDatabase.Read());
+            }
+            else if (option == 3)
+            {
+                var persons = PersonDatabase.Read();
+                var property = (PersonProperty)ConsoleManager.InputPropertyIndex<PersonProperty>();
+                persons.Sort(new PersonComparer(property));
+
+                string[] orderChoices =
                 {
-                    var persons = PersonDatabase.Read();
-                    var property = (PersonProperty)ConsoleManager.InputPropertyIndex<PersonProperty>();
-                    persons.Sort(new PersonComparer(property));
+                    "Increasing",
+                    "Decreasing"
+                };
 
-                    string[] orderChoices =
-                    {
-                        "Increasing",
-                        "Decreasing"
-                    };
+                var order = ConsoleManager.InputOption(orderChoices, "Order");
 
-                    var order = ConsoleManager.InputOption(orderChoices, "Order");
+                if (order == 1)
+                    persons.Reverse();
 
-                    if (order == 1)
-                        persons.Reverse();
-
-                    ConsoleManager.PrintTable(persons);
-                    break;
-                }
-                case 4:
-                {
-                    var persons = PersonDatabase.Read();
-                    var property = (PersonProperty)ConsoleManager.InputPropertyIndex<PersonProperty>();
-                    persons = persons.Search(property);
-                    ConsoleManager.PrintTable(persons);
-                    break;
-                }
-                case 5:
-                    PersonDatabase.Update(ConsoleManager.InputPerson());
-                    break;
-                case 6:
-                    PersonDatabase.Delete(ConsoleManager.InputString("Enter the personal code of the person: "));
-                    break;
-                case 7:
-                    PersonDatabase.CreateFile();
-                    break;
-                default:
-                    throw new IndexOutOfRangeException(nameof(option));
+                ConsoleManager.PrintTable(persons);
+            }
+            else if (option == 4)
+            {
+                var persons = PersonDatabase.Read();
+                var property = (PersonProperty)ConsoleManager.InputPropertyIndex<PersonProperty>();
+                persons = persons.Search(property);
+                ConsoleManager.PrintTable(persons);
+            }
+            else if (option == 5)
+            {
+                var property = (PersonProperty)ConsoleManager.InputPropertyIndex<PersonProperty>();
+                var value = ConsoleManager.InputString($"Enter value of {property}: ");
+                PersonDatabase.Delete(property, value);
+                Console.Clear();
+            }
+            else if (option == 6)
+            {
+                PersonDatabase.CreateFile();
+            }
+            else
+            {
+                throw new IndexOutOfRangeException(nameof(option));
             }
         }
     }
