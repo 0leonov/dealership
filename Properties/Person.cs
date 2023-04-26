@@ -1,6 +1,6 @@
 ﻿namespace Dealership.Properties;
 
-public enum PersonProperty
+public enum Person
 {
     PersonalCode,
     Firstname,

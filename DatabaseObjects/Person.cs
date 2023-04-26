@@ -15,8 +15,5 @@ public class Person : DatabaseObject
     public string Lastname { get; }
     public string PhoneNumber { get; }
 
-    public override string GetPrimaryKey()
-    {
-        return PersonalCode;
-    }
+    public override string GetPrimaryKey() => PersonalCode;
 }

@@ -1,5 +1,4 @@
 ﻿using Dealership.DatabaseObjects;
-using Dealership.Helpers;
 
 namespace Dealership.Databases;
 
@@ -8,22 +7,20 @@ public abstract class Database<T> where T : DatabaseObject
     private const char EntrySeparator = '\n';
     protected const char ParameterSeparator = '\t';
 
-    protected readonly string _path;
+    private readonly string _path;
 
     protected Database(string path)
     {
         _path = path;
     }
 
-    public void Insert(T entry)
+    public virtual void Insert(T entry)
     {
-        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
-            return;
+        if (FileExist() == false) throw new FileNotFoundException("Database not initialized");
 
         if (entry is null) throw new ArgumentNullException(nameof(entry));
-        
-        if (ConsoleManager.CheckErrorExistAndPrint("Already in the database", CheckForDuplicate(entry)))
-            return;
+
+        if (EntryExists(entry)) throw new ArgumentException("Entry already in database");
 
         using var streamWriter = File.AppendText(_path);
         foreach (var propertyInfo in entry.GetType().GetProperties())
@@ -37,55 +34,60 @@ public abstract class Database<T> where T : DatabaseObject
 
         streamWriter.Write(EntrySeparator);
     }
-    
-    protected void EmptyFile()
-    {
-        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
-            return;
 
-        File.WriteAllText(_path, string.Empty);
+    protected void Insert(IEnumerable<T> entries)
+    {
+        foreach (var entry in entries)
+            Insert(entry);
     }
 
     public List<T> Read()
     {
-        if (ConsoleManager.CheckErrorExistAndPrint("File doesn't exist", CheckFileExist() == false))
-            return new List<T>();
+        if (FileExist() == false) throw new FileNotFoundException("Database not initialized");
 
-        var cars = new List<T>();
+        var entries = new List<T>();
 
         using var streamReader = new StreamReader(_path);
         while (streamReader.EndOfStream == false)
         {
             var line = streamReader.ReadLine();
-
+            
             if (string.IsNullOrWhiteSpace(line))
                 throw new Exception("Database is broken, exist empty line");
 
-            cars.Add(ParseLine(line));
+            entries.Add(ParseLine(line));
         }
 
-        return cars;
-    }
-
-    protected bool CheckFileExist()
-    {
-        return File.Exists(_path);
+        return entries;
     }
 
     public void CreateFile()
     {
-        if (ConsoleManager.CheckErrorExistAndPrint("File already exist", CheckFileExist()))
-            return;
+        if (FileExist()) throw new IOException("File already exists");
 
-        using (File.Create(_path))
-        {
-        }
+        using (File.Create(_path)) { }
     }
 
-    protected abstract T ParseLine(string line);
-
-    private bool CheckForDuplicate(T entry)
+    protected List<T> CutEntries()
     {
-        return Read().Any(t => entry.GetPrimaryKey() == t.GetPrimaryKey());
+        if (FileExist() == false) throw new FileNotFoundException("Database not initialized");
+        
+        var contracts = Read();
+        EmptyFile();
+
+        return contracts;
     }
+
+    private void EmptyFile()
+    {
+        if (FileExist() == false) throw new FileNotFoundException("Database not initialized");
+
+        File.WriteAllText(_path, string.Empty);
+    }
+
+    private bool FileExist() => File.Exists(_path);
+
+    private bool EntryExists(T entry) => Read().Any(t => entry.GetPrimaryKey() == t.GetPrimaryKey());
+    
+    protected abstract T ParseLine(string line);
 }

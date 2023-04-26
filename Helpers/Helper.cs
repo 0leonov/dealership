@@ -1,48 +1,51 @@
-﻿using Dealership.DatabaseObjects;
-using Dealership.Properties;
+﻿using System.Globalization;
 
 namespace Dealership.Helpers;
 
 public static class Helper
 {
-    public static List<Car> Search(this List<Car> cars, CarProperty property)
+    public static string PadBoth(this string value, int length)
     {
-        if (property == CarProperty.Make)
+        var spaces = length - value.Length;
+        var padLeft = spaces / 2 + value.Length;
+        return value.PadLeft(padLeft).PadRight(length);
+    }
+    
+    public static List<DatabaseObjects.Car> Search(this List<DatabaseObjects.Car> cars, Properties.Car property)
+    {
+        if (property == Properties.Car.Make)
         {
-            var make = ConsoleManager.InputString("Enter the make of the car: ");
-            return cars.FindAll(car => car.Make.Contains(make));
+            var value = ConsoleHelper.InputString("Enter the make: ");
+            return cars.FindAll(car => car.Make.Contains(value));
         }
-
-        if (property == CarProperty.Model)
+        if (property == Properties.Car.Model)
         {
-            var model = ConsoleManager.InputString("Enter the model of the car: ");
-            return cars.FindAll(car => car.Model.Contains(model));
+            var value = ConsoleHelper.InputString("Enter the model: ");
+            return cars.FindAll(car => car.Model.Contains(value));
         }
-
-        if (property == CarProperty.Color)
+        if (property == Properties.Car.Color)
         {
-            var color = ConsoleManager.InputString("Enter the color of the car: ");
-            return cars.FindAll(car => car.Color.Contains(color));
+            var value = ConsoleHelper.InputString("Enter the color: ");
+            return cars.FindAll(car => car.Color.Contains(value));
         }
-
-        if (property == CarProperty.Vin)
+        if (property == Properties.Car.Vin)
         {
-            var vin = ConsoleManager.InputString("Enter the vin of the car: ");
-            return cars.FindAll(car => car.Vin == vin);
+            var value = ConsoleHelper.InputString("Input the VIN: ");
+            return cars.FindAll(car => car.Vin.Equals(value));
         }
 
         string[] searchChoices =
         {
-            "Minimum price",
-            "Maximum price",
-            "Exact price"
+            "Minimum",
+            "Maximum",
+            "Equals"
         };
 
-        var choice = ConsoleManager.InputOption(searchChoices, "Filter Mode");
+        var choice = ConsoleHelper.InputOption(searchChoices, "Filter Mode");
 
-        if (property == CarProperty.Year)
+        if (property == Properties.Car.Year)
         {
-            var year = ConsoleManager.InputInteger("Enter the year of the car: ");
+            var year = ConsoleHelper.InputInteger("Enter the year: ");
 
             return choice switch
             {
@@ -52,10 +55,9 @@ public static class Helper
                 _ => throw new Exception("Invalid choice")
             };
         }
-
-        if (property == CarProperty.Price)
+        if (property == Properties.Car.Price)
         {
-            var price = ConsoleManager.InputInteger("Enter the price of the car: ");
+            var price = ConsoleHelper.InputInteger("Enter the price: ");
 
             return choice switch
             {
@@ -65,36 +67,91 @@ public static class Helper
                 _ => throw new Exception("Invalid choice")
             };
         }
-
+        
         throw new ArgumentOutOfRangeException(nameof(property));
     }
-
-    public static List<Person> Search(this List<Person> persons, PersonProperty property)
+    
+    public static List<DatabaseObjects.Car> Search(this List<DatabaseObjects.Car> cars, string value)
     {
-        if (property == PersonProperty.PersonalCode)
-        {
-            var personalCode = ConsoleManager.InputString("Enter the personal code: ");
-            return persons.FindAll(person => person.PersonalCode == personalCode);
-        }
+        HashSet<DatabaseObjects.Car> result = new();
+        
+        foreach (var car in cars.FindAll(car => car.Make.Contains(value)))
+            result.Add(car);
+        foreach (var car in cars.FindAll(car => car.Model.Contains(value)))
+            result.Add(car);
+        foreach (var car in cars.FindAll(car => car.Color.Contains(value)))
+            result.Add(car);
+        foreach (var car in cars.FindAll(car => car.Year.ToString().Contains(value)))
+            result.Add(car);
+        foreach (var car in cars.FindAll(car => car.Vin.Contains(value)))
+            result.Add(car);
+        foreach (var car in cars.FindAll(car => car.Price.ToString().Contains(value)))
+            result.Add(car);
 
-        if (property == PersonProperty.Firstname)
-        {
-            var firstname = ConsoleManager.InputString("Enter the firstname: ");
-            return persons.FindAll(person => person.Firstname.Contains(firstname));
-        }
+        return result.ToList();
+    }
 
-        if (property == PersonProperty.Lastname)
+    public static List<DatabaseObjects.Person> Search(this List<DatabaseObjects.Person> persons, Properties.Person property)
+    {
+        return property switch
         {
-            var lastname = ConsoleManager.InputString("Enter the lastname: ");
-            return persons.FindAll(person => person.Lastname.Contains(lastname));
-        }
+            Properties.Person.PersonalCode => persons.FindAll(person =>
+                person.PersonalCode == ConsoleHelper.InputString("Enter the personal code: ")),
+            Properties.Person.Firstname => persons.FindAll(person =>
+                person.Firstname.Contains(ConsoleHelper.InputString("Enter the firstname: "))),
+            Properties.Person.Lastname => persons.FindAll(person =>
+                person.Lastname.Contains(ConsoleHelper.InputString("Enter the lastname: "))),
+            Properties.Person.PhoneNumber => persons.FindAll(person =>
+                person.PhoneNumber == ConsoleHelper.InputString("Enter the phone number: ")),
+            _ => throw new ArgumentOutOfRangeException(nameof(property))
+        };
+    }
+    
+    public static List<DatabaseObjects.Person> Search(this List<DatabaseObjects.Person> persons, string value)
+    {
+        HashSet<DatabaseObjects.Person> result = new();
+        
+        foreach (var person in persons.FindAll(person => person.PersonalCode.Contains(value)))
+            result.Add(person);
+        foreach (var person in persons.FindAll(person => person.Firstname.Contains(value)))
+            result.Add(person);
+        foreach (var person in persons.FindAll(person => person.Lastname.Contains(value)))
+            result.Add(person);
+        foreach (var person in persons.FindAll(person => person.PhoneNumber.Contains(value)))
+            result.Add(person);
 
-        if (property == PersonProperty.PhoneNumber)
+        return result.ToList();
+    }
+
+    public static List<DatabaseObjects.Contract> Search(this List<DatabaseObjects.Contract> contracts, Properties.Contract property)
+    {
+        return property switch
         {
-            var phoneNumber = ConsoleManager.InputString("Enter the phone number: ");
-            return persons.FindAll(person => person.PhoneNumber == phoneNumber);
-        }
+            Properties.Contract.PersonalCode => contracts.FindAll(contract =>
+                contract.PersonalCode == ConsoleHelper.InputString("Enter the personal code: ")),
+            Properties.Contract.Vin => contracts.FindAll(contract =>
+                contract.Vin == ConsoleHelper.InputString("Enter the VIN: ")),
+            Properties.Contract.Id => contracts.FindAll(contract =>
+                contract.Id == ConsoleHelper.InputString("Enter the ID: ")),
+            Properties.Contract.Date => contracts.FindAll(contract =>
+                contract.Date == ConsoleHelper.InputDate()),
+            _ => throw new ArgumentOutOfRangeException(nameof(property))
+        };
+    }
 
-        throw new ArgumentOutOfRangeException(nameof(property));
+    public static List<DatabaseObjects.Contract> Search(this List<DatabaseObjects.Contract> contracts, string value)
+    {
+        HashSet<DatabaseObjects.Contract> result = new();
+        
+        foreach (var contract in contracts.FindAll(contract => contract.PersonalCode.Contains(value)))
+            result.Add(contract);
+        foreach (var contract in contracts.FindAll(contract => contract.Vin.Contains(value)))
+            result.Add(contract);
+        foreach (var contract in contracts.FindAll(contract => contract.Id.Contains(value)))
+            result.Add(contract);
+        foreach (var contract in contracts.FindAll(contract => contract.Date.ToString(CultureInfo.InvariantCulture).Contains(value)))
+            result.Add(contract);
+
+        return result.ToList();
     }
 }

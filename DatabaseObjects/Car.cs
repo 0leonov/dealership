@@ -8,16 +8,6 @@ public class Car : DatabaseObject
 
     public Car(string make, string model, int year, string color, int price, string vin)
     {
-        if (year < MinYear || year > DateTime.Now.Year)
-            throw new ArgumentOutOfRangeException(nameof(year));
-        if (price < MinPrice)
-            throw new ArgumentOutOfRangeException(nameof(price));
-
-        string[] properties = { make, model, color, vin };
-        foreach (var property in properties)
-            if (string.IsNullOrWhiteSpace(property))
-                throw new ArgumentException(nameof(property));
-
         Make = make;
         Model = model;
         Year = year;
@@ -33,8 +23,5 @@ public class Car : DatabaseObject
     public int Price { get; }
     public string Vin { get; }
 
-    public override string GetPrimaryKey()
-    {
-        return Vin;
-    }
+    public override string GetPrimaryKey() => Vin;
 }

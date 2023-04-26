@@ -1,6 +1,6 @@
 ﻿namespace Dealership.Properties;
 
-public enum CarProperty
+public enum Car
 {
     Make,
     Model,
