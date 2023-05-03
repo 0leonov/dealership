@@ -1,6 +1,4 @@
-﻿using Dealership.Properties;
-
-namespace Dealership.Comparers;
+﻿namespace Dealership.Comparers;
 
 public class Car : IComparer<DatabaseObjects.Car>
 {

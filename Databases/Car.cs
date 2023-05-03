@@ -8,7 +8,9 @@ public class Car : Database<DatabaseObjects.Car>
     
     public void DeleteByMake(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Make != value));
+        var allCars = CutEntries();
+        var remainingCars = allCars.Where(entry => entry.Make != value);
+        Insert(remainingCars);
     }
     
     public void DeleteByModel(string value)

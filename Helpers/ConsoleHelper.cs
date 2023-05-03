@@ -234,7 +234,7 @@ public static class ConsoleHelper
     private static void PrintLogo(string header)
     {
         Console.WriteLine(string.Format(
-            $"*{header.PadBoth(LogoWidth - 2)}*\n"
+            $"*{header.PadBoth(LogoWidth - 2)}*\n\n"
         ));
     }
 

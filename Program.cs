@@ -1,5 +1,4 @@
-﻿using Dealership.DatabaseObjects;
-using Dealership.Helpers;
+﻿using Dealership.Helpers;
 
 namespace Dealership;
 
@@ -477,7 +476,7 @@ internal static class Program
         ConsoleHelper.PrintTable(ContractDatabase.Read().Search(keyword), out count);
         total += count;
         
-        Console.WriteLine($"\nTotal: {total} entries");
+        Console.WriteLine($"Total: {total} entries");
         ConsoleHelper.PrintPressAnyKey();
     }
 }

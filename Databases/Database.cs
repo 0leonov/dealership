@@ -23,6 +23,7 @@ public abstract class Database<T> where T : DatabaseObject
         if (EntryExists(entry)) throw new ArgumentException("Entry already in database");
 
         using var streamWriter = File.AppendText(_path);
+        
         foreach (var propertyInfo in entry.GetType().GetProperties())
         {
             var property = propertyInfo.GetValue(entry, null);

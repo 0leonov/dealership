@@ -10,28 +10,28 @@ public static class Helper
         var padLeft = spaces / 2 + value.Length;
         return value.PadLeft(padLeft).PadRight(length);
     }
-    
+
     public static List<DatabaseObjects.Car> Search(this List<DatabaseObjects.Car> cars, Properties.Car property)
     {
         if (property == Properties.Car.Make)
         {
             var value = ConsoleHelper.InputString("Enter the make: ");
-            return cars.FindAll(car => car.Make.Contains(value));
+            return cars.FindAll(car => car.Make.Contains(value, StringComparison.OrdinalIgnoreCase));
         }
         if (property == Properties.Car.Model)
         {
             var value = ConsoleHelper.InputString("Enter the model: ");
-            return cars.FindAll(car => car.Model.Contains(value));
+            return cars.FindAll(car => car.Model.Contains(value, StringComparison.OrdinalIgnoreCase));
         }
         if (property == Properties.Car.Color)
         {
             var value = ConsoleHelper.InputString("Enter the color: ");
-            return cars.FindAll(car => car.Color.Contains(value));
+            return cars.FindAll(car => car.Color.Contains(value, StringComparison.OrdinalIgnoreCase));
         }
         if (property == Properties.Car.Vin)
         {
             var value = ConsoleHelper.InputString("Input the VIN: ");
-            return cars.FindAll(car => car.Vin.Equals(value));
+            return cars.FindAll(car => car.Vin.Contains(value, StringComparison.OrdinalIgnoreCase));
         }
 
         string[] searchChoices =
@@ -75,17 +75,17 @@ public static class Helper
     {
         HashSet<DatabaseObjects.Car> result = new();
         
-        foreach (var car in cars.FindAll(car => car.Make.Contains(value)))
+        foreach (var car in cars.FindAll(car => car.Make.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(car);
-        foreach (var car in cars.FindAll(car => car.Model.Contains(value)))
+        foreach (var car in cars.FindAll(car => car.Model.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(car);
-        foreach (var car in cars.FindAll(car => car.Color.Contains(value)))
+        foreach (var car in cars.FindAll(car => car.Color.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(car);
-        foreach (var car in cars.FindAll(car => car.Year.ToString().Contains(value)))
+        foreach (var car in cars.FindAll(car => car.Year.ToString().Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(car);
-        foreach (var car in cars.FindAll(car => car.Vin.Contains(value)))
+        foreach (var car in cars.FindAll(car => car.Vin.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(car);
-        foreach (var car in cars.FindAll(car => car.Price.ToString().Contains(value)))
+        foreach (var car in cars.FindAll(car => car.Price.ToString().Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(car);
 
         return result.ToList();
@@ -96,13 +96,13 @@ public static class Helper
         return property switch
         {
             Properties.Person.PersonalCode => persons.FindAll(person =>
-                person.PersonalCode == ConsoleHelper.InputString("Enter the personal code: ")),
+                person.PersonalCode.Contains(ConsoleHelper.InputString("Enter the personal code: "), StringComparison.OrdinalIgnoreCase)),
             Properties.Person.Firstname => persons.FindAll(person =>
-                person.Firstname.Contains(ConsoleHelper.InputString("Enter the firstname: "))),
+                person.Firstname.Contains(ConsoleHelper.InputString("Enter the firstname: "), StringComparison.OrdinalIgnoreCase)),
             Properties.Person.Lastname => persons.FindAll(person =>
-                person.Lastname.Contains(ConsoleHelper.InputString("Enter the lastname: "))),
+                person.Lastname.Contains(ConsoleHelper.InputString("Enter the lastname: "), StringComparison.OrdinalIgnoreCase)),
             Properties.Person.PhoneNumber => persons.FindAll(person =>
-                person.PhoneNumber == ConsoleHelper.InputString("Enter the phone number: ")),
+                person.PhoneNumber.Contains(ConsoleHelper.InputString("Enter the phone number: "), StringComparison.OrdinalIgnoreCase)),
             _ => throw new ArgumentOutOfRangeException(nameof(property))
         };
     }
@@ -111,13 +111,13 @@ public static class Helper
     {
         HashSet<DatabaseObjects.Person> result = new();
         
-        foreach (var person in persons.FindAll(person => person.PersonalCode.Contains(value)))
+        foreach (var person in persons.FindAll(person => person.PersonalCode.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(person);
-        foreach (var person in persons.FindAll(person => person.Firstname.Contains(value)))
+        foreach (var person in persons.FindAll(person => person.Firstname.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(person);
-        foreach (var person in persons.FindAll(person => person.Lastname.Contains(value)))
+        foreach (var person in persons.FindAll(person => person.Lastname.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(person);
-        foreach (var person in persons.FindAll(person => person.PhoneNumber.Contains(value)))
+        foreach (var person in persons.FindAll(person => person.PhoneNumber.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(person);
 
         return result.ToList();
@@ -128,13 +128,13 @@ public static class Helper
         return property switch
         {
             Properties.Contract.PersonalCode => contracts.FindAll(contract =>
-                contract.PersonalCode == ConsoleHelper.InputString("Enter the personal code: ")),
+                contract.PersonalCode.Contains(ConsoleHelper.InputString("Enter the personal code: "), StringComparison.OrdinalIgnoreCase)),
             Properties.Contract.Vin => contracts.FindAll(contract =>
-                contract.Vin == ConsoleHelper.InputString("Enter the VIN: ")),
+                contract.Vin.Contains(ConsoleHelper.InputString("Enter the VIN: "), StringComparison.OrdinalIgnoreCase)),
             Properties.Contract.Id => contracts.FindAll(contract =>
-                contract.Id == ConsoleHelper.InputString("Enter the ID: ")),
+                contract.Id.Contains(ConsoleHelper.InputString("Enter the ID: "), StringComparison.OrdinalIgnoreCase)),
             Properties.Contract.Date => contracts.FindAll(contract =>
-                contract.Date == ConsoleHelper.InputDate()),
+                contract.Date.ToString(CultureInfo.InvariantCulture).Contains(ConsoleHelper.InputDate().ToString(CultureInfo.InvariantCulture))),
             _ => throw new ArgumentOutOfRangeException(nameof(property))
         };
     }
@@ -143,13 +143,13 @@ public static class Helper
     {
         HashSet<DatabaseObjects.Contract> result = new();
         
-        foreach (var contract in contracts.FindAll(contract => contract.PersonalCode.Contains(value)))
+        foreach (var contract in contracts.FindAll(contract => contract.PersonalCode.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(contract);
-        foreach (var contract in contracts.FindAll(contract => contract.Vin.Contains(value)))
+        foreach (var contract in contracts.FindAll(contract => contract.Vin.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(contract);
-        foreach (var contract in contracts.FindAll(contract => contract.Id.Contains(value)))
+        foreach (var contract in contracts.FindAll(contract => contract.Id.Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(contract);
-        foreach (var contract in contracts.FindAll(contract => contract.Date.ToString(CultureInfo.InvariantCulture).Contains(value)))
+        foreach (var contract in contracts.FindAll(contract => contract.Date.ToString(CultureInfo.InvariantCulture).Contains(value, StringComparison.OrdinalIgnoreCase)))
             result.Add(contract);
 
         return result.ToList();

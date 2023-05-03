@@ -1,5 +1,3 @@
-using Dealership.Properties;
-
 namespace Dealership.Comparers;
 
 public class Person : IComparer<DatabaseObjects.Person>
