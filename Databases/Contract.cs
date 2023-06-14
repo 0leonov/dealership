@@ -21,24 +21,68 @@ public class Contract : Database<DatabaseObjects.Contract>
         base.Insert(entry);
     }
 
-    public void DeleteById(string value)
+    public List<DatabaseObjects.Contract> DeleteById(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Id != value));
+        var allContracts = CutEntries();
+        var deleted = new List<DatabaseObjects.Contract>();
+        
+        foreach (var contract in allContracts)
+        {
+            if (contract.Id != value) 
+                Insert(contract);
+            else 
+                deleted.Add(contract);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByVin(string value)
+    public List<DatabaseObjects.Contract> DeleteByVin(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Vin != value));
+        var allContracts = CutEntries();
+        var deleted = new List<DatabaseObjects.Contract>();
+        
+        foreach (var contract in allContracts)
+        {
+            if (contract.Vin != value) 
+                Insert(contract);
+            else 
+                deleted.Add(contract);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByPersonalCode(string value)
+    public List<DatabaseObjects.Contract> DeleteByPersonalCode(string value)
     {
-        Insert(CutEntries().Where(entry => entry.PersonalCode != value));
+        var allContracts = CutEntries();
+        var deleted = new List<DatabaseObjects.Contract>();
+        
+        foreach (var contract in allContracts)
+        {
+            if (contract.PersonalCode != value) 
+                Insert(contract);
+            else 
+                deleted.Add(contract);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByDate(DateTime value)
+    public List<DatabaseObjects.Contract> DeleteByDate(DateTime value)
     {
-        Insert(CutEntries().Where(entry => entry.Date != value));
+        var allContracts = CutEntries();
+        var deleted = new List<DatabaseObjects.Contract>();
+        
+        foreach (var contract in allContracts)
+        {
+            if (contract.Date != value) 
+                Insert(contract);
+            else 
+                deleted.Add(contract);
+        }
+
+        return deleted;
     }
 
     protected override DatabaseObjects.Contract ParseLine(string line)

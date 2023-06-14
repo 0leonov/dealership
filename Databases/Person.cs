@@ -4,24 +4,68 @@ public class Person : Database<DatabaseObjects.Person>
 {
     public Person(string path) : base(path) { }
 
-    public void DeleteByPersonalCode(string value)
+    public List<DatabaseObjects.Person> DeleteByPersonalCode(string value)
     {
-        Insert(CutEntries().Where(entry => entry.PersonalCode != value));
+        var allPersons = CutEntries();
+        var deleted = new List<DatabaseObjects.Person>();
+        
+        foreach (var person in allPersons)
+        {
+            if (person.PersonalCode != value) 
+                Insert(person);
+            else 
+                deleted.Add(person);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByFirstname(string value)
+    public List<DatabaseObjects.Person> DeleteByFirstname(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Firstname != value));
+        var allPersons = CutEntries();
+        var deleted = new List<DatabaseObjects.Person>();
+        
+        foreach (var person in allPersons)
+        {
+            if (person.Firstname != value) 
+                Insert(person);
+            else 
+                deleted.Add(person);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByLastname(string value)
+    public List<DatabaseObjects.Person> DeleteByLastname(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Lastname != value));
+        var allPersons = CutEntries();
+        var deleted = new List<DatabaseObjects.Person>();
+        
+        foreach (var person in allPersons)
+        {
+            if (person.Lastname != value) 
+                Insert(person);
+            else 
+                deleted.Add(person);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByPhoneNumber(string value)
+    public List<DatabaseObjects.Person> DeleteByPhoneNumber(string value)
     {
-        Insert(CutEntries().Where(entry => entry.PhoneNumber != value));
+        var allPersons = CutEntries();
+        var deleted = new List<DatabaseObjects.Person>();
+        
+        foreach (var person in allPersons)
+        {
+            if (person.PhoneNumber != value) 
+                Insert(person);
+            else 
+                deleted.Add(person);
+        }
+
+        return deleted;
     }
 
     protected override DatabaseObjects.Person ParseLine(string line)

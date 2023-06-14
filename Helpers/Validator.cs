@@ -11,12 +11,12 @@ public static partial class Validator
     public static bool IsVinValid(string value) => VinRegex().IsMatch(value);
     
 
-    [GeneratedRegex("[0-9]{6}[-][0-9]{5}")]
+    [GeneratedRegex(@"^\d{6}-\d{5}$")]
     private static partial Regex PersonalCodeRegex();
     
-    [GeneratedRegex("[2][0-9]{7}")]
+    [GeneratedRegex(@"^2\d{7}$")]
     private static partial Regex PhoneRegex();
     
-    [GeneratedRegex("[A-HJ-NPR-Z0-9]{17}")]
+    [GeneratedRegex(@"^[A-HJ-NPR-Z0-9]{17}$")]
     private static partial Regex VinRegex();
 }

@@ -1,41 +1,103 @@
-﻿using Dealership.DatabaseObjects;
-
-namespace Dealership.Databases;
+﻿namespace Dealership.Databases;
 
 public class Car : Database<DatabaseObjects.Car>
 {
     public Car(string path) : base(path) { }
     
-    public void DeleteByMake(string value)
+    public List<DatabaseObjects.Car> DeleteByMake(string value)
     {
         var allCars = CutEntries();
-        var remainingCars = allCars.Where(entry => entry.Make != value);
-        Insert(remainingCars);
+        var deleted = new List<DatabaseObjects.Car>();
+        
+        foreach (var car in allCars)
+        {
+            if (car.Make != value) 
+                Insert(car);
+            else 
+                deleted.Add(car);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByModel(string value)
+    public List<DatabaseObjects.Car> DeleteByModel(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Model != value));
+        var allCars = CutEntries();
+        var deleted = new List<DatabaseObjects.Car>();
+        
+        foreach (var car in allCars)
+        {
+            if (car.Model != value) 
+                Insert(car);
+            else 
+                deleted.Add(car);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByYear(int value)
+    public List<DatabaseObjects.Car> DeleteByYear(int value)
     {
-        Insert(CutEntries().Where(entry => entry.Year != value));
+        var allCars = CutEntries();
+        var deleted = new List<DatabaseObjects.Car>();
+        
+        foreach (var car in allCars)
+        {
+            if (car.Year != value) 
+                Insert(car);
+            else 
+                deleted.Add(car);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByColor(string value)
+    public List<DatabaseObjects.Car> DeleteByColor(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Color != value));
+        var allCars = CutEntries();
+        var deleted = new List<DatabaseObjects.Car>();
+        
+        foreach (var car in allCars)
+        {
+            if (car.Color != value) 
+                Insert(car);
+            else 
+                deleted.Add(car);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByPrice(int value)
+    public List<DatabaseObjects.Car> DeleteByPrice(int value)
     {
-        Insert(CutEntries().Where(entry => entry.Price != value));
+        var allCars = CutEntries();
+        var deleted = new List<DatabaseObjects.Car>();
+        
+        foreach (var car in allCars)
+        {
+            if (car.Price != value) 
+                Insert(car);
+            else 
+                deleted.Add(car);
+        }
+
+        return deleted;
     }
     
-    public void DeleteByVin(string value)
+    public List<DatabaseObjects.Car> DeleteByVin(string value)
     {
-        Insert(CutEntries().Where(entry => entry.Vin != value));
+        var allCars = CutEntries();
+        var deleted = new List<DatabaseObjects.Car>();
+        
+        foreach (var car in allCars)
+        {
+            if (car.Vin != value) 
+                Insert(car);
+            else 
+                deleted.Add(car);
+        }
+
+        return deleted;
     }
 
     protected override DatabaseObjects.Car ParseLine(string line)

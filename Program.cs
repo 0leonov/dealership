@@ -16,11 +16,14 @@ internal static class Program
         "Sort data",
         "Search data",
         "Delete data",
-        "Create database file"
     };
 
     public static void Main()
     {
+        CarDatabase.CreateFile();
+        PersonDatabase.CreateFile();
+        ContractDatabase.CreateFile();
+        
         string[] choices =
         {
             "Exit",
@@ -70,10 +73,6 @@ internal static class Program
                 {
                     CarDatabase.Insert(ConsoleHelper.InputCar());
                 }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
                 catch (ArgumentException e)
                 {
                     Console.WriteLine(e.Message);
@@ -81,29 +80,12 @@ internal static class Program
             }
             else if (option == 2)
             {
-                try
-                {
-                    ConsoleHelper.PrintTable(CarDatabase.Read());
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                ConsoleHelper.PrintTable(CarDatabase.Read());
             }
             else if (option == 3)
             {
-                List<DatabaseObjects.Car> cars;
-                    
-                try
-                {
-                    cars = CarDatabase.Read();
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                
+                var cars = CarDatabase.Read();
+
                 var property = (Properties.Car)ConsoleHelper.InputPropertyIndex<Properties.Car>();
                 cars.Sort(new Comparers.Car(property));
 
@@ -122,18 +104,8 @@ internal static class Program
             }
             else if (option == 4)
             {
-                List<DatabaseObjects.Car> cars;
-                
-                try
-                {
-                    cars = CarDatabase.Read();
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                
+                var cars = CarDatabase.Read();
+
                 var property = (Properties.Car)ConsoleHelper.InputPropertyIndex<Properties.Car>();
                 cars = cars.Search(property);
                 
@@ -142,52 +114,31 @@ internal static class Program
             }
             else if (option == 5)
             {
-                var property = (Properties.Car)ConsoleHelper.InputPropertyIndex<Properties.Car>();
-
-                try
+                var cars = CarDatabase.Read();
+                if (!cars.Any())
                 {
-                    switch (property)
-                    {
-                        case Properties.Car.Make:
-                            CarDatabase.DeleteByMake(ConsoleHelper.InputString("Enter the make: "));
-                            break;
-                        case Properties.Car.Model:
-                            CarDatabase.DeleteByModel(ConsoleHelper.InputString("Enter the make: "));
-                            break;
-                        case Properties.Car.Year:
-                            CarDatabase.DeleteByYear(ConsoleHelper.InputInteger("Enter the year: "));
-                            break;
-                        case Properties.Car.Color:
-                            CarDatabase.DeleteByColor(ConsoleHelper.InputString("Enter the color: "));
-                            break;
-                        case Properties.Car.Price:
-                            CarDatabase.DeleteByPrice(ConsoleHelper.InputInteger("Enter the price: "));
-                            break;
-                        case Properties.Car.Vin:
-                            CarDatabase.DeleteByVin(ConsoleHelper.InputString("Enter the VIN: "));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(property));
-                    }
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Nothing to delete!");
+                    ConsoleHelper.PrintPressAnyKey();
                     continue;
                 }
                 
-                Console.Clear();
-            }
-            else if (option == 6)
-            {
-                try
+                ConsoleHelper.PrintTable(cars);
+                
+                var property = (Properties.Car)ConsoleHelper.InputPropertyIndex<Properties.Car>();
+
+                var deleted = property switch
                 {
-                    CarDatabase.CreateFile();
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                    Properties.Car.Make => CarDatabase.DeleteByMake(ConsoleHelper.InputString("Enter the make: ")),
+                    Properties.Car.Model => CarDatabase.DeleteByModel(ConsoleHelper.InputString("Enter the model: ")),
+                    Properties.Car.Year => CarDatabase.DeleteByYear(ConsoleHelper.InputInteger("Enter the year: ")),
+                    Properties.Car.Color => CarDatabase.DeleteByColor(ConsoleHelper.InputString("Enter the color: ")),
+                    Properties.Car.Price => CarDatabase.DeleteByPrice(ConsoleHelper.InputInteger("Enter the price: ")),
+                    Properties.Car.Vin => CarDatabase.DeleteByVin(ConsoleHelper.InputString("Enter the VIN: ")),
+                    _ => throw new ArgumentOutOfRangeException(nameof(property))
+                };
+
+                Console.WriteLine("Deleted entries: ");
+                ConsoleHelper.PrintTable(deleted);
             }
             else
             {
@@ -210,10 +161,6 @@ internal static class Program
                 {
                     PersonDatabase.Insert(ConsoleHelper.InputPerson());
                 }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
                 catch (ArgumentException e)
                 {
                     Console.WriteLine(e.Message);
@@ -221,28 +168,13 @@ internal static class Program
             }
             else if (option == 2)
             {
-                try
-                {
-                    ConsoleHelper.PrintTable(PersonDatabase.Read());
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                ConsoleHelper.PrintTable(PersonDatabase.Read());
             }
             else if (option == 3)
             {
                 List<DatabaseObjects.Person> persons;
                 
-                try
-                {
-                    persons = PersonDatabase.Read();
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
+                persons = PersonDatabase.Read();
                 
                 var property = (Properties.Person)ConsoleHelper.InputPropertyIndex<Properties.Person>();
                 persons.Sort(new Comparers.Person(property));
@@ -262,18 +194,8 @@ internal static class Program
             }
             else if (option == 4)
             {
-                List<DatabaseObjects.Person> persons;
-                
-                try
-                {
-                    persons = PersonDatabase.Read();
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                
+                var persons = PersonDatabase.Read();
+
                 var property = (Properties.Person)ConsoleHelper.InputPropertyIndex<Properties.Person>();
                 persons = persons.Search(property);
                 
@@ -282,46 +204,29 @@ internal static class Program
             }
             else if (option == 5)
             {
-                var property = (Properties.Person)ConsoleHelper.InputPropertyIndex<Properties.Person>();
-
-                try
+                var persons = PersonDatabase.Read();
+                if (!persons.Any())
                 {
-                    switch (property)
-                    {
-                        case Properties.Person.PersonalCode:
-                            PersonDatabase.DeleteByPersonalCode(ConsoleHelper.InputString("Enter the personal code: "));
-                            break;
-                        case Properties.Person.Firstname:
-                            PersonDatabase.DeleteByFirstname(ConsoleHelper.InputString("Enter the firstname: "));
-                            break;
-                        case Properties.Person.Lastname:
-                            PersonDatabase.DeleteByLastname(ConsoleHelper.InputString("Enter the lastname: "));
-                            break;
-                        case Properties.Person.PhoneNumber:
-                            PersonDatabase.DeleteByPhoneNumber(ConsoleHelper.InputString("Enter the phone number: "));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(property));
-                    }
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Nothing to delete!");
+                    ConsoleHelper.PrintPressAnyKey();
                     continue;
                 }
                 
-                Console.Clear();
-            }
-            else if (option == 6)
-            {
-                try
+                ConsoleHelper.PrintTable(persons);
+                
+                var property = (Properties.Person)ConsoleHelper.InputPropertyIndex<Properties.Person>();
+
+                var deleted = property switch
                 {
-                    PersonDatabase.CreateFile();
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                    Properties.Person.PersonalCode => PersonDatabase.DeleteByPersonalCode(ConsoleHelper.InputString("Enter the personal code: ")),
+                    Properties.Person.Firstname => PersonDatabase.DeleteByFirstname(ConsoleHelper.InputString("Enter the firstname: ")),
+                    Properties.Person.Lastname => PersonDatabase.DeleteByLastname(ConsoleHelper.InputString("Enter the lastname: ")),
+                    Properties.Person.PhoneNumber => PersonDatabase.DeleteByPhoneNumber(ConsoleHelper.InputString("Enter the phone number: ")),
+                    _ => throw new ArgumentOutOfRangeException(nameof(property))
+                };
+                
+                Console.WriteLine("Deleted entries: ");
+                ConsoleHelper.PrintTable(deleted);
             }
             else
             {
@@ -344,10 +249,6 @@ internal static class Program
                 {
                     ContractDatabase.Insert(ConsoleHelper.InputContract());
                 }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
                 catch (ArgumentException e)
                 {
                     Console.WriteLine(e.Message);
@@ -355,29 +256,12 @@ internal static class Program
             }
             else if (option == 2)
             {
-                try
-                {
-                    ConsoleHelper.PrintTable(ContractDatabase.Read());
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                ConsoleHelper.PrintTable(ContractDatabase.Read());
             }
             else if (option == 3)
             {
-                List<DatabaseObjects.Contract> contracts;
-                
-                try
-                {
-                    contracts = ContractDatabase.Read();
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                
+                var contracts = ContractDatabase.Read();
+
                 var property = (Properties.Contract)ConsoleHelper.InputPropertyIndex<Properties.Contract>();
                 contracts.Sort(new Comparers.Contract(property));
 
@@ -396,18 +280,8 @@ internal static class Program
             }
             else if (option == 4)
             {
-                List<DatabaseObjects.Contract> contracts;
-                
-                try
-                {
-                    contracts = ContractDatabase.Read();
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
-                    continue;
-                }
-                
+                var contracts = ContractDatabase.Read();
+
                 var property = (Properties.Contract)ConsoleHelper.InputPropertyIndex<Properties.Contract>();
                 contracts = contracts.Search(property);
                 
@@ -416,46 +290,29 @@ internal static class Program
             }
             else if (option == 5)
             {
-                var property = (Properties.Contract)ConsoleHelper.InputPropertyIndex<Properties.Contract>();
-
-                try
+                var contracts = ContractDatabase.Read();
+                if (!contracts.Any())
                 {
-                    switch (property)
-                    {
-                        case Properties.Contract.PersonalCode:
-                            ContractDatabase.DeleteByPersonalCode(ConsoleHelper.InputString("Enter the personal code: "));
-                            break;
-                        case Properties.Contract.Vin:
-                            ContractDatabase.DeleteByVin(ConsoleHelper.InputString("Enter the VIN: "));
-                            break;
-                        case Properties.Contract.Date:
-                            ContractDatabase.DeleteByDate(ConsoleHelper.InputDate());
-                            break;
-                        case Properties.Contract.Id:
-                            ContractDatabase.DeleteById(ConsoleHelper.InputString("Enter the ID: "));
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(property));
-                    }
-                }
-                catch (FileNotFoundException e)
-                {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Nothing to delete!");
+                    ConsoleHelper.PrintPressAnyKey();
                     continue;
                 }
                 
-                Console.Clear();
-            }
-            else if (option == 6)
-            {
-                try
+                ConsoleHelper.PrintTable(contracts);
+                
+                var property = (Properties.Contract)ConsoleHelper.InputPropertyIndex<Properties.Contract>();
+
+                var deleted = property switch
                 {
-                    ContractDatabase.CreateFile();
-                }
-                catch (IOException e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+                    Properties.Contract.PersonalCode => ContractDatabase.DeleteByPersonalCode(ConsoleHelper.InputString("Enter the personal code: ")),
+                    Properties.Contract.Vin => ContractDatabase.DeleteByVin(ConsoleHelper.InputString("Enter the VIN: ")),
+                    Properties.Contract.Date => ContractDatabase.DeleteByDate(ConsoleHelper.InputDate()),
+                    Properties.Contract.Id => ContractDatabase.DeleteById(ConsoleHelper.InputString("Enter the ID: ")),
+                    _ => throw new ArgumentOutOfRangeException(nameof(property))
+                };
+                
+                Console.WriteLine("Deleted entries: ");
+                ConsoleHelper.PrintTable(deleted);
             }
             else
             {

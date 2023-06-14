@@ -64,8 +64,8 @@ public abstract class Database<T> where T : DatabaseObject
 
     public void CreateFile()
     {
-        if (FileExist()) throw new IOException("File already exists");
-
+        if (FileExist()) return;
+        
         using (File.Create(_path)) { }
     }
 
